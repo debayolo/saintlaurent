@@ -1,8 +1,8 @@
 FROM php:8.2-fpm
 
-# Install system dependencies and PHP extensions
+# Install system dependencies, PHP extensions, and nginx
 RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libjpeg-dev libonig-dev libxml2-dev \
+    nginx git curl libpng-dev libjpeg-dev libonig-dev libxml2-dev \
     libzip-dev zip unzip libpq-dev \
     && docker-php-ext-install pdo_mysql mbstring zip gd
 
@@ -15,17 +15,18 @@ WORKDIR /var/www
 # Copy application code
 COPY . .
 
-# Set permissions for Laravel
+# Set permissions for Laravel storage and cache
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 storage bootstrap/cache
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/sites-available/default
 
+# Expose port 80 for HTTP
+EXPOSE 80
 
-# Expose FPM port (Render listens to port 10000 by default)
-EXPOSE 9000
-
-# Run PHP-FPM as the main process
-CMD ["php-fpm"]
+# Start both php-fpm and nginx
+CMD service nginx start && php-fpm
