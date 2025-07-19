@@ -27,12 +27,12 @@ services:
         value: root
       - key: DB_PASSWORD
         value: yJC2cOgNHhCuyQ3UBF9sJC3CNSBM64NQ
-    buildCommand: ""  # Handled by Dockerfile
+    buildCommand: "" # Handled by Dockerfile
     startCommand: |
       php artisan migrate --force && \
       php artisan config:cache && \
       php artisan route:cache && \
       php artisan view:cache && \
-      service nginx start && php-fpm
+      php artisan serve --host=0.0.0.0 --port=8000
+    port: 8000
     healthCheckPath: /
-    port: 80

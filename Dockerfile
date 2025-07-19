@@ -1,8 +1,8 @@
 FROM php:8.2-fpm
 
-# Install system dependencies, PHP extensions, and nginx
+# Install system dependencies and PHP extensions (no nginx)
 RUN apt-get update && apt-get install -y \
-    nginx git curl libpng-dev libjpeg-dev libonig-dev libxml2-dev \
+    git curl libpng-dev libjpeg-dev libonig-dev libxml2-dev \
     libzip-dev zip unzip libpq-dev \
     && docker-php-ext-install pdo_mysql mbstring zip gd
 
@@ -23,11 +23,8 @@ RUN chown -R www-data:www-data /var/www && \
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Copy custom nginx config
-COPY nginx.conf /etc/nginx/sites-available/default
+# Expose port 8000 for Laravel's built-in server
+EXPOSE 8000
 
-# Expose port 80 for HTTP
-EXPOSE 80
-
-# Start both nginx and php-fpm
-CMD service nginx start && php-fpm
+# Start Laravel's built-in development server
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
