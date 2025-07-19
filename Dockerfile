@@ -22,11 +22,7 @@ RUN chown -R www-data:www-data /var/www \
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Clear old caches (optional but good)
-RUN php artisan config:clear && \
-    php artisan cache:clear && \
-    php artisan route:clear && \
-    php artisan view:clear
+
 
 # Expose FPM port (Render listens to port 10000 by default)
 EXPOSE 9000
