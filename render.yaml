@@ -27,7 +27,10 @@ services:
         value: root
       - key: DB_PASSWORD
         value: yJC2cOgNHhCuyQ3UBF9sJC3CNSBM64NQ
-    buildCommand: "" # Handled by Dockerfile
+    buildCommand: |
+      mkdir -p bootstrap/cache && \
+      chmod -R 775 bootstrap/cache && \
+      composer install --no-dev --optimize-autoloader
     startCommand: |
       php artisan migrate --force && \
       php artisan config:cache && \
