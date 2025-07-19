@@ -32,3 +32,8 @@ EXPOSE 8000
 
 # Start Laravel’s built-in server
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+# Ensure bootstrap/cache exists and is writable
+RUN mkdir -p bootstrap/cache && chmod -R 775 bootstrap/cache
+
+# Then run Composer
+RUN composer install --no-dev --optimize-autoloader
