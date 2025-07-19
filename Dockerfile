@@ -15,9 +15,10 @@ WORKDIR /var/www
 # Copy application code
 COPY . .
 
-# Set permissions for Laravel storage and cache
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 775 storage bootstrap/cache
+# Set permissions for Laravel directories including public
+RUN chown -R www-data:www-data /var/www && \
+    chmod -R 755 /var/www/public && \
+    chmod -R 775 storage bootstrap/cache
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts
@@ -28,5 +29,5 @@ COPY nginx.conf /etc/nginx/sites-available/default
 # Expose port 80 for HTTP
 EXPOSE 80
 
-# Start both php-fpm and nginx
+# Start both nginx and php-fpm
 CMD service nginx start && php-fpm
